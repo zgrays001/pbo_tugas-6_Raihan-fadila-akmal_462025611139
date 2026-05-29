@@ -1,0 +1,161 @@
+"""
+=============================================================
+ Pertemuan 7 - Polymorphism & Duck Typing
+ Nama  : Raihan Fadila Akmal
+ NIM   : 462025611139
+=============================================================
+
+Skenario: Sistem Alat Pembayaran
+
+Parent Class : AlatPembayaran
+Child Class  : KartuKredit, EWallet, TransferBank (bonus)
+Duck Typing  : fungsi jalankan_transaksi() — tidak peduli tipe objeknya
+"""
+
+
+# ─────────────────────────────────────────────
+# Parent Class : AlatPembayaran
+# ─────────────────────────────────────────────
+class AlatPembayaran:
+    def __init__(self, pemilik: str, saldo: float):
+        self.pemilik = pemilik
+        self.saldo   = saldo
+
+    def proses_bayar(self, jumlah: float):
+        """Metode yang akan di-override oleh setiap Child Class."""
+        raise NotImplementedError("Subclass wajib mengimplementasikan proses_bayar()!")
+
+    def cek_saldo(self):
+        print(f"  Saldo {self.pemilik}: Rp {self.saldo:,.0f}")
+
+
+# ─────────────────────────────────────────────
+# Child Class 1 : KartuKredit
+# ─────────────────────────────────────────────
+class KartuKredit(AlatPembayaran):
+    def __init__(self, pemilik: str, saldo: float, limit_kredit: float):
+        super().__init__(pemilik, saldo)
+        self.limit_kredit = limit_kredit
+
+    def proses_bayar(self, jumlah: float):
+        """Override: KartuKredit menggunakan limit kredit, bukan saldo langsung."""
+        biaya_admin = jumlah * 0.02   # biaya admin 2%
+        total       = jumlah + biaya_admin
+
+        print(f"\n  [KartuKredit] Pemilik  : {self.pemilik}")
+        print(f"  [KartuKredit] Bayar    : Rp {jumlah:,.0f}")
+        print(f"  [KartuKredit] Biaya 2% : Rp {biaya_admin:,.0f}")
+        print(f"  [KartuKredit] Total    : Rp {total:,.0f}")
+
+        if total <= self.limit_kredit:
+            self.limit_kredit -= total
+            print(f"  [KartuKredit]  Pembayaran BERHASIL!")
+            print(f"  [KartuKredit] Sisa limit: Rp {self.limit_kredit:,.0f}")
+        else:
+            print(f"  [KartuKredit]  GAGAL! Limit tidak mencukupi.")
+
+
+# ─────────────────────────────────────────────
+# Child Class 2 : EWallet
+# ─────────────────────────────────────────────
+class EWallet(AlatPembayaran):
+    def __init__(self, pemilik: str, saldo: float, nama_ewallet: str):
+        super().__init__(pemilik, saldo)
+        self.nama_ewallet = nama_ewallet
+
+    def proses_bayar(self, jumlah: float):
+        """Override: EWallet langsung memotong saldo tanpa biaya tambahan."""
+        print(f"\n  [EWallet - {self.nama_ewallet}] Pemilik : {self.pemilik}")
+        print(f"  [EWallet - {self.nama_ewallet}] Bayar   : Rp {jumlah:,.0f}")
+
+        if jumlah <= self.saldo:
+            self.saldo -= jumlah
+            print(f"  [EWallet - {self.nama_ewallet}]  Pembayaran BERHASIL!")
+            print(f"  [EWallet - {self.nama_ewallet}] Sisa saldo: Rp {self.saldo:,.0f}")
+        else:
+            print(f"  [EWallet - {self.nama_ewallet}]  GAGAL! Saldo tidak mencukupi.")
+
+
+# ─────────────────────────────────────────────
+# Child Class 3 (Bonus) : TransferBank
+# ─────────────────────────────────────────────
+class TransferBank(AlatPembayaran):
+    def __init__(self, pemilik: str, saldo: float, nama_bank: str):
+        super().__init__(pemilik, saldo)
+        self.nama_bank = nama_bank
+
+    def proses_bayar(self, jumlah: float):
+        """Override: Transfer bank kena biaya admin flat Rp 6.500."""
+        biaya_admin = 6500
+        total       = jumlah + biaya_admin
+
+        print(f"\n  [TransferBank - {self.nama_bank}] Pemilik      : {self.pemilik}")
+        print(f"  [TransferBank - {self.nama_bank}] Bayar        : Rp {jumlah:,.0f}")
+        print(f"  [TransferBank - {self.nama_bank}] Biaya admin  : Rp {biaya_admin:,.0f}")
+        print(f"  [TransferBank - {self.nama_bank}] Total        : Rp {total:,.0f}")
+
+        if total <= self.saldo:
+            self.saldo -= total
+            print(f"  [TransferBank - {self.nama_bank}]  Transfer BERHASIL!")
+            print(f"  [TransferBank - {self.nama_bank}] Sisa saldo: Rp {self.saldo:,.0f}")
+        else:
+            print(f"  [TransferBank - {self.nama_bank}]  GAGAL! Saldo tidak mencukupi.")
+
+
+# ─────────────────────────────────────────────
+# Duck Typing — fungsi mandiri di luar kelas
+# ─────────────────────────────────────────────
+def jalankan_transaksi(objek, jumlah: float):
+    """
+    Duck Typing:
+    Fungsi ini TIDAK peduli tipe objeknya (KartuKredit / EWallet / TransferBank).
+    Selama objek punya metode proses_bayar(), fungsi ini bisa memanggilnya.
+    'Jika ia berperilaku seperti bebek, maka ia adalah bebek.'
+    """
+    print("-" * 55)
+    objek.proses_bayar(jumlah)
+    print("-" * 55)
+
+
+# ─────────────────────────────────────────────
+# Main Program
+# ─────────────────────────────────────────────
+def main():
+    # Buat objek dari masing-masing kelas
+    kartu   = KartuKredit("Raihan",  saldo=0,          limit_kredit=5_000_000)
+    gopay   = EWallet     ("Raihan",  saldo=500_000,    nama_ewallet="GoPay")
+    bca     = TransferBank("Raihan",  saldo=2_000_000,  nama_bank="BCA")
+
+    print("\n" + "=" * 55)
+    print("  DEMO POLYMORPHISM — Method Overriding")
+    print("=" * 55)
+    print("  Setiap objek memanggil proses_bayar() yang sama,")
+    print("  tetapi logikanya BERBEDA di setiap kelas.\n")
+
+    # Panggil via fungsi Duck Typing — tidak peduli tipe objeknya
+    jalankan_transaksi(kartu,  150_000)   # KartuKredit
+    jalankan_transaksi(gopay,  75_000)    # EWallet
+    jalankan_transaksi(bca,    200_000)   # TransferBank
+
+    print("\n" + "=" * 55)
+    print("  DEMO DUCK TYPING — objek berbeda, fungsi sama")
+    print("=" * 55)
+    print("  Kirim semua objek ke jalankan_transaksi() sekaligus:\n")
+
+    daftar_pembayaran = [
+        KartuKredit("Budi",  0,         3_000_000, ),
+        EWallet    ("Citra", 300_000,   "OVO"),
+        TransferBank("Dani", 1_500_000, "Mandiri"),
+    ]
+
+    nominal = 100_000
+    for alat in daftar_pembayaran:
+        jalankan_transaksi(alat, nominal)
+
+    print("\n   Duck Typing berhasil!")
+    print("  Fungsi jalankan_transaksi() tidak memedulikan tipe objek,")
+    print("  selama objek memiliki metode proses_bayar().\n")
+
+
+if __name__ == "__main__":
+    main()
