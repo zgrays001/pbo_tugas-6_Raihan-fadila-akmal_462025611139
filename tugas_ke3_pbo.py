@@ -1,0 +1,49 @@
+# main.py
+# Tugas 2 - Pemrograman Berorientasi Objek
+# Nama: Raihan Fadila Akmal
+# NIM: 462025611139
+
+class Laptop:
+    """
+    Class Laptop - Objek dunia nyata perangkat elektronik
+    """
+    
+   
+    def __init__(self, merk, processor, ram_gb, warna):
+        self.merk = merk
+        self.processor = processor
+        self.ram_gb = ram_gb
+        self.warna = warna
+    
+
+    def info(self):
+        return f"{self.merk} | {self.processor} | {self.ram_gb}GB RAM | Warna: {self.warna}"
+
+
+
+laptop1 = Laptop("ASUS TUF Gaming", "Intel Core i5-11400H", 8, "Hitam")
+laptop2 = Laptop("Acer Swift 3", "AMD Ryzen 5 5500U", 16, "Silver")
+laptop3 = Laptop("MSI Modern 14", "Intel Core i7-1195G7", 32, "Putih")
+
+ 
+print("=" * 50)
+print("DATA LAPTOP")
+print("=" * 50)
+
+print(laptop1)
+print(laptop2)
+print(laptop3)
+
+print("\n" + "=" * 50)
+print("INFORMASI DETAIL LAPTOP")
+print("=" * 50)
+
+print(laptop1.info())
+print(laptop2.info())
+print(laptop3.info())
+
+print("\n" + "=" * 50)
+print("Tugas 2 - OOP Python")
+print(f"Nama: Raihan Fadila Akmal")
+print(f"NIM: 462025611139")
+print("=" * 50)

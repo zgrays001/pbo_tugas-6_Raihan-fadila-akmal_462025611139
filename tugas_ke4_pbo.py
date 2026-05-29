@@ -1,0 +1,38 @@
+class Produk:
+    def __init__(self, nama, harga, stok):
+        self.nama = nama
+        self.harga = harga
+        self.stok = stok
+
+    
+    def __str__(self):
+        return f"Produk: {self.nama} | Harga: Rp{self.harga} | Stok: {self.stok}"
+
+
+    def __eq__(self, other):
+        return self.harga == other.harga
+
+
+    def __lt__(self, other):
+        return self.harga < other.harga
+
+    # Perbandingan lebih besar
+    def __gt__(self, other):
+        return self.harga > other.harga
+
+
+produk1 = Produk("Keyboard Gaming", 350000, 10)
+produk2 = Produk("Mouse Wireless", 200000, 15)
+produk3 = Produk("Headset", 350000, 8)
+
+print(produk1)
+print(produk2)
+print(produk3)
+
+print("\n=== Hasil Perbandingan ===")
+
+print(f"Apakah {produk1.nama} lebih mahal dari {produk2.nama}? {produk1 > produk2}")
+
+print(f"Apakah {produk2.nama} lebih murah dari {produk3.nama}? {produk2 < produk3}")
+
+print(f"Apakah harga {produk1.nama} sama dengan {produk3.nama}? {produk1 == produk3}")
