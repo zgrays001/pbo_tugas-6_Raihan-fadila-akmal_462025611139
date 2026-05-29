@@ -1,0 +1,157 @@
+
+
+class Pasien:
+    """
+    Kelas yang merepresentasikan data pasien rumah sakit.
+    Atribut sensitif disembunyikan menggunakan double underscore (__).
+    """
+
+    def __init__(self, nama, nomor_rm, tanggal_lahir, diagnosa, biaya):
+        self.__nama          = nama           
+        self.__nomor_rm      = nomor_rm      
+        self.__tanggal_lahir = tanggal_lahir  
+        self.__diagnosa      = diagnosa       
+        self.__biaya         = biaya          
+
+    
+
+    def get_nama(self):
+        """Mengembalikan nama pasien."""
+        return self.__nama
+
+    def get_nomor_rm(self):
+        """Mengembalikan nomor rekam medis."""
+        return self.__nomor_rm
+
+    def get_diagnosa(self, kode_akses):
+        """
+        Mengembalikan diagnosa HANYA jika kode akses benar.
+        Hanya dokter/petugas medis yang boleh melihat diagnosa.
+        """
+        if kode_akses == "MEDIS123":
+            return f"Diagnosa: {self.__diagnosa}"
+        else:
+            return "Akses ditolak! Kode akses salah."
+
+    def get_biaya(self, kode_akses):
+        """
+        Mengembalikan informasi biaya HANYA jika kode akses benar.
+        Hanya bagian administrasi yang boleh melihat biaya.
+        """
+        if kode_akses == "ADMIN456":
+            return f"Total biaya: Rp {self.__biaya:,.0f}"
+        else:
+            return "Akses ditolak! Kode akses salah."
+
+    def get_tanggal_lahir(self, kode_akses):
+        """
+        Mengembalikan tanggal lahir HANYA jika kode akses benar.
+        """
+        if kode_akses == "MEDIS123" or kode_akses == "ADMIN456":
+            return f"Tanggal lahir: {self.__tanggal_lahir}"
+        else:
+            return "Akses ditolak! Kode akses salah."
+
+    
+
+    def update_diagnosa(self, diagnosa_baru, kode_akses):
+        """
+        Memperbarui diagnosa dengan validasi:
+        - Kode akses harus benar
+        - Diagnosa baru tidak boleh kosong
+        """
+        if kode_akses != "MEDIS123":
+            print(" Gagal: Kode akses salah. Hanya dokter yang bisa mengubah diagnosa.")
+        elif diagnosa_baru.strip() == "":
+            print(" Gagal: Diagnosa tidak boleh kosong.")
+        else:
+            self.__diagnosa = diagnosa_baru
+            print(f" Diagnosa berhasil diperbarui menjadi: {self.__diagnosa}")
+
+    def tambah_biaya(self, jumlah, kode_akses):
+        """
+        Menambahkan biaya dengan validasi:
+        - Kode akses harus benar
+        - Jumlah harus lebih dari 0
+        """
+        if kode_akses != "ADMIN456":
+            print(" Gagal: Kode akses salah. Hanya admin yang bisa mengubah biaya.")
+        elif jumlah <= 0:
+            print(" Gagal: Jumlah biaya harus lebih dari Rp 0.")
+        else:
+            self.__biaya += jumlah
+            print(f" Biaya ditambahkan Rp {jumlah:,.0f}. Total kini: Rp {self.__biaya:,.0f}")
+
+    def tampilkan_info_umum(self):
+        """Menampilkan informasi umum yang boleh dilihat siapa saja."""
+        print("=" * 45)
+        print("       INFORMASI UMUM PASIEN")
+        print("=" * 45)
+        print(f"  Nama       : {self.__nama}")
+        print(f"  No. RM     : {self.__nomor_rm}")
+        print("  (Data medis & keuangan memerlukan akses khusus)")
+        print("=" * 45)
+
+
+
+
+print("\n" + "=" * 45)
+print("   SISTEM DATA PASIEN RUMAH SAKIT")
+print("=" * 45)
+
+
+pasien1 = Pasien(
+    nama          = "Andi Wijaya",
+    nomor_rm      = "RM-2024-0071",
+    tanggal_lahir = "15 Maret 1990",
+    diagnosa      = "Hipertensi Grade 2",
+    biaya         = 1_500_000
+)
+
+
+print("\n[1] INFO UMUM (akses bebas):")
+pasien1.tampilkan_info_umum()
+
+
+print("\n[2] GETTER DASAR:")
+print(f"  Nama   : {pasien1.get_nama()}")
+print(f"  No. RM : {pasien1.get_nomor_rm()}")
+
+
+print("\n[3] AKSES DIAGNOSA (kode benar):")
+print(" ", pasien1.get_diagnosa("MEDIS123"))
+
+
+print("\n[4] AKSES DIAGNOSA (kode salah):")
+print(" ", pasien1.get_diagnosa("SALAH999"))
+
+
+print("\n[5] AKSES BIAYA (kode benar):")
+print(" ", pasien1.get_biaya("ADMIN456"))
+
+
+print("\n[6] AKSES BIAYA (kode salah):")
+print(" ", pasien1.get_biaya("MEDIS123"))
+
+
+print("\n[7] UPDATE DIAGNOSA:")
+pasien1.update_diagnosa("Diabetes Tipe 2", "MEDIS123")   
+pasien1.update_diagnosa("",               "MEDIS123")   
+pasien1.update_diagnosa("Asma",           "SALAH999")   
+
+
+print("\n[8] TAMBAH BIAYA:")
+pasien1.tambah_biaya(500_000,  "ADMIN456")  
+pasien1.tambah_biaya(-100_000, "ADMIN456") 
+pasien1.tambah_biaya(200_000,  "SALAH999")   
+
+print("\n[9] PERCOBAAN AKSES LANGSUNG (harus error):")
+try:
+    print(pasien1.__diagnosa)
+except AttributeError as e:
+    print(f"  AttributeError: {e}")
+    print("  Encapsulation bekerja! Atribut private tidak bisa diakses langsung.")
+
+print("\n" + "=" * 45)
+print("   Program selesai tanpa error.")
+print("=" * 45 + "\n")
