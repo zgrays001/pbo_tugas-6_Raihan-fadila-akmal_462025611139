@@ -1,0 +1,33 @@
+class SaldoTidakCukupError(Exception):
+    def __init__(self, pesan):
+        super().__init__(pesan)
+
+class RekeningBank:
+    def __init__(self, nama, saldo):
+        self.nama = nama
+        self.saldo = saldo
+
+    def tarik_uang(self, jumlah):
+        if jumlah > self.saldo:
+            raise SaldoTidakCukupError(
+                f"Saldo tidak mencukupi. Saldo saat ini: Rp{self.saldo}"
+            )
+
+        self.saldo -= jumlah
+        print(f"Penarikan berhasil sebesar Rp{jumlah}")
+        print(f"Sisa saldo: Rp{self.saldo}")
+
+try:
+    rekening = RekeningBank("Raihan", 500000)
+
+    jumlah_tarik = int(input("Masukkan jumlah penarikan: Rp"))
+    rekening.tarik_uang(jumlah_tarik)
+
+except SaldoTidakCukupError as e:
+    print("Error:", e)
+
+except ValueError:
+    print("Input harus berupa angka!")
+
+finally:
+    print("Proses pemeriksaan transaksi telah selesai.")
